@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Surpresa Gatinha</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to bottom, #ffe6f0, #fff0f5);
+      min-height:100vh;
+      overflow-x:hidden;
+      position:relative;
+    }
+
+    /* topo fixo */
+    .topbar{
+      position: fixed;
+      top:0; left:0; right:0;
+      padding:12px 16px;
+      text-align: center;
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+      z-index: 40;
+    }
+    .topbar h1{
+      margin:0;
+      color:#d63384;
+      font-size:1.9rem;
+    }
+    .topbar button{
+      margin-top:8px;
+      background:#d63384;color:white;border:none;padding:10px 16px;border-radius:10px;
+      font-size:15px;cursor:pointer;
+    }
+    .topbar button:hover{ background:#a81e64 }
+
+    /* espaço para o conteúdo não ficar escondido atrás do topo */
+    .main-space{ height:160px; }
+
+    /* carta abaixo do topo */
+    .texto-carta{
+      display:none;
+      max-width:760px;
+      margin:12px auto;
+      background:white;
+      color:#444;
+      padding:12px 16px;
+      border-radius:12px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.12);
+      text-align:justify;
+      font-size:1rem;
+    }
+
+    /* rodapé com grama */
+    #rodape-grama{
+      position: fixed;
+      bottom:0;
+      left:0;
+      width:100%;
+      height:80px;
+      background: linear-gradient(to top, #4caf50 0%, rgba(255,255,255,0) 100%);
+      z-index: 5;
+    }
+
+    /* fotos acima da grama */
+    #foto-bottom{
+      position: fixed;
+      bottom:150px; /* acima da grama */
+      left:0;
+      width:100%;
+      display:flex;
+      justify-content:center;
+      flex-wrap:wrap;
+      gap:12px;
+      padding:4px;
+      z-index:30;
+    }
+    .foto-thumb{
+      width:auto;
+      max-width:190px;
+      max-height:200px;
+      object-fit:cover;
+      border-radius:10px;
+      box-shadow:0 6px 16px rgba(0,0,0,0.12);
+      display:block;
+      opacity:0;
+      transform: translateY(8px);
+      animation: fadeInUp 420ms ease forwards;
+    }
+    @keyframes fadeInUp{
+      to { opacity:1; transform: translateY(0) }
+    }
+
+    /* flores que caem */
+    .flor{
+      position:fixed;
+      font-size:28px;
+      cursor:pointer;
+      z-index:22;
+      user-select:none;
+      animation-name: cair;
+      animation-timing-function: linear;
+      animation-iteration-count: infinite;
+    }
+    @keyframes cair { from { top:-40px; } to { top:100vh; } }
+    @keyframes pulsar { from { transform: scale(1); } to { transform: scale(1.25); } }
+    .coracao-pulso{
+      animation-name: pulsar, cair;
+      animation-timing-function: ease-in-out, linear;
+      animation-iteration-count: infinite, infinite;
+      animation-direction: alternate, normal;
+      animation-duration: 1s, var(--fall-duration,4s);
+    }
+    .flor:not(.coracao-pulso){
+      animation-duration: var(--fall-duration,4s);
+    }
+
+    /* responsivo */
+    @media (max-width:800px){
+      .foto-thumb{ max-width:100px; max-height:100px; }
+      .flor{ font-size:24px }
+      #foto-bottom{ bottom:100px; } /* ajusta no celular */
+      #rodape-grama{ height:60px; }
+    }
+
+    #hidden-gallery{ display:none; }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <h1>Feliz Aniversário de 2 anos de Namoro ❤️</h1>
+    <button onclick="toggleCarta()">Aperte para abrir minha carta 💌</button>
+  </div>
+
+  <div class="main-space"></div>
+
+  <!-- carta -->
+  <div id="carta" class="texto-carta" aria-live="polite">
+    Oii meu amor, espero que com isso possa reviver alguns dos momentos especiais que tivemos juntos, sei que muitos ficaram de fora, mas fico feliz de termos tantas lembraças juntos que nem coube aqui, você com certeza é a pessoa mais especial e perfeita que eu conheço, te admiro em todos os aspectos e você sabe bem disso, obrigado por ser minha namorada fofa, charmosa, brava, mandona, linda, gostosa, inteligente e a mulher mais incrível que já pisou nesse planeta, Eu te amo infinitamente minha eterna garota. 🤍🌹✨ <br>
+    Dica: Aperte nas flores que estão caindo.
+  </div>
+
+  <!-- fotos rodapé -->
+  <div id="foto-bottom"></div>
+
+  <!-- grama -->
+  <div id="rodape-grama"></div>
+
+  <!-- galeria oculta -->
+  <div id="hidden-gallery">
+    <img src="1.jpeg" alt="Foto 1">
+    <img src="2.jpeg" alt="Foto 2">
+    <img src="4.jpeg" alt="Foto 4">
+    <img src="7.jpeg" alt="Foto 7">
+    <img src="8.jpeg" alt="Foto 8">
+    <img src="9.jpeg" alt="Foto 9">
+    <img src="10.jpeg" alt="Foto 10">
+    <img src="11.jpeg" alt="Foto 11">
+    <img src="12.jpeg" alt="Foto 12">
+    <img src="13.jpeg" alt="Foto 13">
+  </div>
+
+  <script>
+    const hiddenImgs = Array.from(document.querySelectorAll('#hidden-gallery img')).map(img => ({
+      src: img.getAttribute('src'),
+      alt: img.getAttribute('alt') || ''
+    }));
+    let nextIndex = 0;
+
+    const bottomGallery = document.getElementById('foto-bottom');
+
+    function revealNextPhoto(){
+      if(nextIndex >= hiddenImgs.length){
+        alert("Foi isso :) Deixe sua avaliação, de 10 a 100 beijos em mim. 🥰💕");
+        return;
+      }
+      const info = hiddenImgs[nextIndex];
+      const el = document.createElement('img');
+      el.src = info.src;
+      el.alt = info.alt;
+      el.className = 'foto-thumb';
+      bottomGallery.appendChild(el);
+      nextIndex++;
+      bottomGallery.scrollLeft = bottomGallery.scrollWidth;
+    }
+
+    const flores = ["🌸","🌹","🌻","❤️"];
+    function criarFlor(){
+      const flor = document.createElement('div');
+      flor.className = 'flor';
+      const kind = flores[Math.floor(Math.random()*flores.length)];
+      flor.textContent = kind;
+      const leftPercent = 4 + Math.random()*92;
+      flor.style.left = leftPercent + 'vw';
+      const dur = (Math.random()*3+2).toFixed(2);
+      flor.style.setProperty('--fall-duration', dur+'s');
+      if(kind==="❤️") flor.classList.add('coracao-pulso');
+      flor.addEventListener('click',(e)=>{
+        e.stopPropagation();
+        revealNextPhoto();
+        flor.style.transform='scale(1.15)';
+        setTimeout(()=>flor.style.transform='',220);
+      });
+      const lifetime = Math.max(3000, Math.round(parseFloat(dur)*1000)+800);
+      document.body.appendChild(flor);
+      setTimeout(()=>{ if(flor && flor.parentNode) flor.remove() }, lifetime);
+    }
+    setInterval(criarFlor,420);
+
+    function toggleCarta(){
+      const carta = document.getElementById('carta');
+      carta.style.display = (carta.style.display==='block')?'none':'block';
+    }
+  </script>
+</body>
+</html>
